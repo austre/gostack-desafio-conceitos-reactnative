@@ -1,8 +1,7 @@
-//Documento ajustado de acordo com o video https://www.youtube.com/watch?v=lziAk0J_Ppc&feature=youtu.be.
-//Deixei de usar o FlatList para montar os itens techs, substituí pelo uso do map conforme vídeo.
-//Na linha repository.techs.map foi utilizado repository.techs.split(',').map pelo fato de que a 
-//prpriedade techs é uma string com valores separados por vírgula.
-//Com isso, os testes passaram.
+//Documento ajustado de acordo com o video https://www.youtube.com/watch?v=lziAk0J_Ppc&feature=youtu.be
+//Os itens tech ainda foram montados com FlatList
+//Inseri o controle no texto "curtidas" de forma que o "s" só aparece quando o likes é maior do que 1
+//Os testes ainda não foram 100%
 
 import React,{useEffect,useState} from "react";
 import api from "./services/api";
@@ -29,7 +28,9 @@ export default function App() {
   async function handleLikeRepository(id) {
     // Implement "Like Repository" functionality
     const response=await api.post(`repositories/${id}/like`);
+    console.log(response);
     const likes=response.data.likes;
+    console.log(likes);
 
     const repositoriesUpdated=repositories.map(repository=>{
       if(repository.id==id){
@@ -56,12 +57,16 @@ export default function App() {
             <View style={styles.repositoryContainer}>
               <Text style={styles.repository}>{repository.title}</Text>
               
-              <View style={styles.techsContainer}>
-                {
-                repository.techs.split(',').map(tech=>(
-                  <Text key={tech} style={styles.tech}>{tech}</Text>
-                ))}
-              </View>
+              <FlatList horizontal={true}
+              data={repository.techs.split(',')} 
+              keyExtractor={techItem=>techItem}
+              renderItem={({item:techItem})=>(
+                <View style={styles.techsContainer}>
+                  <Text style={styles.tech}>{techItem}</Text>
+                </View>
+              )}
+              >
+              </FlatList>
 
               <TouchableOpacity
                 style={styles.button}

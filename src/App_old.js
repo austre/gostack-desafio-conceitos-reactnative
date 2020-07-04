@@ -1,11 +1,5 @@
-//Documento ajustado de acordo com o video https://www.youtube.com/watch?v=lziAk0J_Ppc&feature=youtu.be.
-//Deixei de usar o FlatList para montar os itens techs, substituí pelo uso do map conforme vídeo.
-//Na linha repository.techs.map foi utilizado repository.techs.split(',').map pelo fato de que a 
-//prpriedade techs é uma string com valores separados por vírgula.
-//Com isso, os testes passaram.
-
 import React,{useEffect,useState} from "react";
-import api from "./services/api";
+import api from "services/api";
 
 import {
   SafeAreaView,
@@ -28,21 +22,6 @@ export default function App() {
 
   async function handleLikeRepository(id) {
     // Implement "Like Repository" functionality
-    const response=await api.post(`repositories/${id}/like`);
-    const likes=response.data.likes;
-
-    const repositoriesUpdated=repositories.map(repository=>{
-      if(repository.id==id){
-        return {...repository,likes};
-      }else{
-        return repository;
-      }
-    });
-    
-    setRepositories(repositoriesUpdated);
-    /*if(response.status===204){
-      setRepositories(repositories.filter(repository=>repository.id!=id));
-    }*/
   }
 
   return (
@@ -55,30 +34,45 @@ export default function App() {
           renderItem={({item:repository})=>(
             <View style={styles.repositoryContainer}>
               <Text style={styles.repository}>{repository.title}</Text>
-              
               <View style={styles.techsContainer}>
-                {
-                repository.techs.split(',').map(tech=>(
-                  <Text key={tech} style={styles.tech}>{tech}</Text>
-                ))}
-              </View>
-
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => handleLikeRepository(repository.id)}
-                testID={`like-button-${repository.id}`}
-              >
-                <Text style={styles.buttonText}>Curtir</Text>
-              </TouchableOpacity>
-
-              <View style={styles.likesContainer}>
-                <Text style={styles.likeText}
-                testID={`repository-likes-${repository.id}`}
-              >{repository.likes} curtida{repository.likes>1?'s':''}</Text>
+                <Text style={styles.tech}>{repository.techs}</Text>
               </View>
             </View>
           )}
         />
+
+
+        <View style={styles.repositoryContainer}>
+          <Text style={styles.repository}>Repository 1</Text>
+
+          <View style={styles.techsContainer}>
+            <Text style={styles.tech}>
+              ReactJS
+            </Text>
+            <Text style={styles.tech}>
+              Node.js
+            </Text>
+          </View>
+
+          <View style={styles.likesContainer}>
+            <Text
+              style={styles.likeText}
+              // Remember to replace "1" below with repository ID: {`repository-likes-${repository.id}`}
+              testID={`repository-likes-1`}
+            >
+              3 curtidas
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleLikeRepository(1)}
+            // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
+            testID={`like-button-1`}
+          >
+            <Text style={styles.buttonText}>Curtir</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
     </>
   );
@@ -106,7 +100,7 @@ const styles = StyleSheet.create({
   tech: {
     fontSize: 12,
     fontWeight: "bold",
-    marginRight: 5,
+    marginRight: 10,
     backgroundColor: "#04d361",
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -124,8 +118,6 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    justifyContent:'center',
-    alignItems:'flex-start'
   },
   buttonText: {
     fontSize: 14,
